@@ -21,7 +21,7 @@ pub struct AesGcm<'a> {
 impl<'a> AesGcm<'a> {
     pub fn new (key_size: KeySize, key: &[u8], nonce: &[u8], aad: &[u8]) -> AesGcm<'a> {
         assert!(key.len() == 16 || key.len() == 24 || key.len() == 32);
-        assert!(nonce.len() == 12);
+        assert!(nonce.len() == 16);
 
         // GCM technically differs from CTR mode in how role overs are handled
         // GCM only touches the right most 4 bytes while CTR roles all 16 over
@@ -34,7 +34,6 @@ impl<'a> AesGcm<'a> {
 
         let mut iv = [0u8; 16];
         copy_memory(nonce, &mut iv);
-        iv[15] = 1u8;
         let mut cipher = ctr(key_size,key,&iv);
         let temp_block = [0u8; 16];
         let mut final_block = [0u8; 16];
